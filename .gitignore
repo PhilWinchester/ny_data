@@ -1,0 +1,22 @@
+# generic
+*.swp
+*.swo
+*.DS_Store
+.~lock.*
+.cache
+.directory
+.tmp
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# editors
+*.idea
+*.pycharm_helpers/
+*.sublime-*
+
+# pytest
+.coverage
+.pytest_cache

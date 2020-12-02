@@ -1,0 +1,24 @@
+# Whitelist only those top-level directories that will be copied into the
+# docker container. (`*` is used to ignore everything, then `!` is used to
+# add back only what we need.) Sending unnecessary files to the build
+# context will slow down the build process.
+*
+!conf
+!src
+
+# Ignore temp files and other junk that may be within the whitelisted dirs.
+# CAUTION: Syntax is different from .gitignore. To match files under any
+# directory, the glob pattern MUST be preceded by `**/`.
+**/*.swp
+**/*.swo
+**/*.pyc
+**/*.DS_Store
+**/.~lock.*
+**/.cache
+**/.directory
+**/.tmp
+**/__pycache__/
+
+# pytest
+**/.coverage
+**/.pytest_cache
