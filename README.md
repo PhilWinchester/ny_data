@@ -7,6 +7,29 @@ Open Source Python Library: https://github.com/xmunoz/sodapy
 https://github.com/thecityny/covid-19-nyc-data
 https://github.com/nychealth/coronavirus-data
 
+
+## Environment Setup
+
+~~~
+docker pull debian:buster-slim
+docker image ls
+~~~
+
+Add S3 and a frontend container
+
+
+## Development Notes
+
+#### Setting up Application
+1. Create a working flask application (hello world)
+2. Mount that application in a Dockerfile
+3. Get docker-compose working with the dockerfile
+4. Connect a mysql container to the flask app in compose.
+
+
+### Used
+[Wait for It](https://github.com/vishnubob/wait-for-it)
+
 ## coronavirus-data  
 
 NYC Health Data set. Updated daily (on a 3 day lag) or updated weekly on Thursday
@@ -75,11 +98,3 @@ curl "https://data.cityofnewyork.us/resource/uiay-nctu.json?open_date=2020-10-29
 https://medium.com/@_blahblahblah
 https://github.com/blahblahblah-/goodservice
 https://api.mta.info/#/landing
-
-
-## Environment Setup
-
-~~~
-docker pull debian:buster-slim
-docker image ls
-~~~

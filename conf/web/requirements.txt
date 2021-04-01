@@ -1,2 +1,4 @@
-flask
-Django
+alembic
+Flask
+mysqlclient
+SQLAlchemy

@@ -1,4 +1,4 @@
 set global sql_mode='STRICT_ALL_TABLES';
-create database if not exists `nyc`;
-use `nyc`;
-grant all on `nyc`.* to 'nyc'@'%' identified by 'nyc^3!';
+create database if not exists `ny_data`;
+use `ny_data`;
+grant all on `ny_data`.* to 'ny_data'@'%' identified by 'nyc^3!';

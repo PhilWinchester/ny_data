@@ -1,4 +1,4 @@
-FROM mysql:5.7.16
+FROM mysql:8.0.23
 
 ADD init.sql /
 

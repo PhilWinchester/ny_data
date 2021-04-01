@@ -5,9 +5,15 @@ services:
     image: code/web:${IMAGE_VERSION:-latest}
     depends_on:
       - mysql
+    entrypoint: [
+      'conf/wait-for-it.sh', 'mysql:3306', '--',
+    ]
     command: ['python', 'src/app.py']
+    # Left is the docker port and right is the flask port
     ports:
-      - 8800:8800
+      - 8800:5000
+    networks:
+      - default
     volumes:
       - ./conf:/opt/code/conf
       - ./src:/opt/code/src
