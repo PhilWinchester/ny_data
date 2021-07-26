@@ -2,3 +2,5 @@ alembic
 Flask
 mysqlclient
 SQLAlchemy
+Flask-SQLAlchemy
+mysqlclient

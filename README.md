@@ -17,6 +17,10 @@ docker image ls
 
 Add S3 and a frontend container
 
+~~~
+docker image prune
+~~~
+
 
 ## Development Notes
 

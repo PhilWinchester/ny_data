@@ -2,21 +2,27 @@
 
 from flask import Flask, jsonify
 from sqlalchemy import create_engine, MetaData
+from flask_sqlalchemy import SQLAlchemy
+
+from models import practice
 
 app = Flask(__name__)
 
-# 'mysql+mysqldb://root:test@db/ny_data'
+# 'mysql+mysqldb://root:test@db:3306/ny_data'
 user='root'
-password='test'
+password='root'
 host='db'
-connection_string = f'mysql+mysqldb://{user}:{password}@{host}/ny_data'
+connection_string = f'mysql://{user}:{password}@{host}:3306/ny_data'
 
-print(connection_string)
+app.config['SQLALCHEMY_DATABASE_URI'] = connection_string
+db = SQLAlchemy(app)
+print(db)
+print('db initiated')
+# engine = create_engine(connection_string)
+# connection = engine.connect()
+# metadata = MetaData(bind=engine)
+# metadata.create_all(engine)
 
-engine = create_engine(connection_string)
-metadata = MetaData(bind=engine)
-
-print(metadata.tables.keys())
 
 @app.route('/')
 def hello_world():
