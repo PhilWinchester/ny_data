@@ -34,6 +34,14 @@ docker image prune
 ### Used
 [Wait for It](https://github.com/vishnubob/wait-for-it)
 
+
+## MTA Info 
+
+[Static File Page](http://web.mta.info/developers/developer-data-terms.html#data)
+
+Download and Parse Stations.csv google-transit/ to map stop_id to an actual station name. Probably need a psql table to store this.
+
+
 ## coronavirus-data  
 
 NYC Health Data set. Updated daily (on a 3 day lag) or updated weekly on Thursday
@@ -77,7 +85,6 @@ curl "https://data.cityofnewyork.us/resource/2nwg-uqyg.json" | jq .
 curl "https://data.cityofnewyork.us/resource/2nwg-uqyg.json?\$query=SELECT * WHERE mod_zcta = '10025' ORDER BY date DESC" | jq .
 ~~~
 
-<!-- 928-864-5204 -->
 
 ## NYC Open Data
 

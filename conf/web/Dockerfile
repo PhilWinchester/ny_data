@@ -1,12 +1,10 @@
 FROM python:3.8-slim-buster
 
-WORKDIR /opt/code
-ENV PYTHONPATH=/opt/code/src
+ENV PYTHONBUFFERED=1
+
+WORKDIR /code
 
 RUN apt-get update && apt-get install -y \
-    # dev library for talking to mysql
-    default-libmysqlclient-dev \
-    gcc \
     # Simple init script
     dumb-init \
     # duh
@@ -15,9 +13,9 @@ RUN apt-get update && apt-get install -y \
     jq curl \
     && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
 
-COPY conf/web/requirements.txt /opt/code/conf/web/requirements.txt
+COPY conf/web/requirements.txt /code/conf/web/requirements.txt
 
-RUN apt-get update && pip install -r /opt/code/conf/web/requirements.txt
+RUN pip install -r /code/conf/web/requirements.txt
 
 CMD ["/bin/bash"]
 
@@ -25,7 +23,4 @@ CMD ["/bin/bash"]
 # COPY src /opt/code/src
 # COPY app.py /opt/code/app.py
 
-COPY . .
-
-#run app.py with python
-ENTRYPOINT ["/opt/code/conf/web/entrypoint.sh"]
+COPY . /code/

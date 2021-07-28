@@ -1,34 +1,21 @@
 version: '3'
 
 services:
-  web:
-    image: code/web:${IMAGE_VERSION:-latest}
-    depends_on:
-      - mysql
-    entrypoint: [
-      'conf/wait-for-it.sh', 'mysql:3306', '--',
-    ]
-    command: ['python', 'src/app.py']
-    # Left is the docker port and right is the flask port
-    ports:
-      - 8800:5000
-    networks:
-      - default
-    volumes:
-      - ./conf:/opt/code/conf
-      - ./src:/opt/code/src
-  mysql:
-    image: code/mysql:${IMAGE_VERSION:-latest}
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-    networks:
-      - default
-    volumes:
-      - mysql_vol:/var/lib/mysql
+  db:
+      image: postgres
+      volumes:
+          - ./data/db:/var/lib/postgresql/data
+      environment:
+          - POSTGRES_DB=docker_example
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=postgres
 
-volumes:
   web:
-  mysql_vol:
-    driver_opts:
-      type: tmpfs
-      device: tmpfs
+      image: code/web:${IMAGE_VERSION:-latest}
+      command: python manage.py runserver 0.0.0.0:8000
+      volumes:
+          - .:/code
+      ports:
+          - "8000:8000"
+      depends_on: 
+          - db
