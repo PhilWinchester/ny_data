@@ -1,6 +1,10 @@
 # Django Notes
 
-A series of notes/commands I used to get this Django app up. 
+A series of notes/commands I used to get this Django app up.
+
+https://github.com/neoterix/nyc-mta-arrival-notify/blob/master/mta_notification.py
+https://github.com/blahblahblah-/goodservice-v2/tree/main/app/models
+https://github.com/MobilityData/gtfs-realtime-bindings/tree/master/python
 
 
 ### Initialization 
@@ -33,20 +37,11 @@ DATABASES = {
 
 FROM INSIDE THE WEB CONTAINER
 
-- `python manage.py` talk to the Django CLI
-- `makemigrations` Tell django we want to make a new migration file
-- `polls` the application where Django should look for changes in the models files.
-
-`python manage.py makemigrations polls`
+`python manage.py makemigrations realtime_subway`
 
 Inspect a migration file and see the SQL that is going to be run
 
-- `python manage.py` talk to the Django CLI
-- `sqlmigrate` tell Django CLI to run a migration
-- `polls` the application django is going to migrate
-- `0001` the migration file django is going to inspect
-
-`python manage.py sqlmigrate polls 0001`
+`python manage.py sqlmigrate realtime_subway 0001`
 
 Run the migration file(s)
 
@@ -59,7 +54,7 @@ Connect to an interactive python environment for the django project.
 This lets you import code from anywhere in your django project
 
 ```py
-from polls.models import Choice, Question
+from realtime_subway.models import Choice, Question
 Question.objects.all()
 ```
 

@@ -10,7 +10,7 @@ from protobuf_to_dict import protobuf_to_dict
 
 """
 API-Key: 
-
+2yIFQSFD13NV1t44UKqw3HWFxFEkK53hW1z4Hdf0
 
 APIs:
 http://mtadatamine.s3-website-us-east-1.amazonaws.com/#/landing
@@ -81,12 +81,12 @@ def ace_data():
 def epoch_to_utc(epoch_val):
     return datetime.utcfromtimestamp(epoch_val).strftime('%Y-%m-%d %H:%M:%S')
 
-for stop in feed.entity[2].trip_update.stop_time_update:
-    print(f'''
-    {stop.stop_id}: 
-        - Arrival = {epoch_to_utc(stop.arrival.time)}
-        - Departure = {epoch_to_utc(stop.departure.time)}
-    ''')
+# for stop in feed.entity[2].trip_update.stop_time_update:
+#     print(f'''
+#     {stop.stop_id}: 
+#         - Arrival = {epoch_to_utc(stop.arrival.time)}
+#         - Departure = {epoch_to_utc(stop.departure.time)}
+#     ''')
 
 if __name__ == '__main__':
     ace_data()

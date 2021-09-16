@@ -7,6 +7,15 @@ Open Source Python Library: https://github.com/xmunoz/sodapy
 https://github.com/thecityny/covid-19-nyc-data
 https://github.com/nychealth/coronavirus-data
 
+## Initialize App
+
+TODO: automate all of this.
+
+1. `make up`
+1. `make sh`
+1. `python manage.py runscript load_station_data` to populate DB with subway data.
+1. `docker exec -it ny_data_db_1 psql postgres -U postgres -w postgres` to inspect DB. 
+
 
 ## Environment Setup
 

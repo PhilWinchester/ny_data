@@ -25,12 +25,14 @@ docker-build-web: FORCE
 	docker build -t "code/web:${IMAGE_VERSION}" -f "conf/web/Dockerfile" \
 		--build-arg "BUILD_VERSION=${IMAGE_VERSION}" .
 
-docker-build-mysql: FORCE
-	docker build -t code/mysql:${IMAGE_VERSION} conf/mysql
+# docker exec -it ny_data_db_1 psql postgres -U postgres -w postgres
 
-# Login to the mysql server currently connected to the running app server
-mysql-login: FORCE
-	docker exec --interactive --tty `$(COMPOSE) ps -q mysql` bash -c 'export TERM=xterm; mysql -u root -proot --default-character-set=utf8 ny_data'
+# docker-build-mysql: FORCE
+# 	docker build -t code/mysql:${IMAGE_VERSION} conf/mysql
+
+# # Login to the mysql server currently connected to the running app server
+# mysql-login: FORCE
+# 	docker exec --interactive --tty `$(COMPOSE) ps -q mysql` bash -c 'export TERM=xterm; mysql -u root -proot --default-character-set=utf8 ny_data'
 
 # --- Dunno ---
 
