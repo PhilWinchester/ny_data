@@ -1,16 +1,16 @@
-import re
-import json
-import requests
+import contextlib, urllib, requests
 
 from datetime import datetime
 
 from google.transit import gtfs_realtime_pb2
 from protobuf_to_dict import protobuf_to_dict
 
+from realtime_subway.models import Stations
+
 
 """
-API-Key: 
-2yIFQSFD13NV1t44UKqw3HWFxFEkK53hW1z4Hdf0
+API-Key in lastpass
+
 
 APIs:
 http://mtadatamine.s3-website-us-east-1.amazonaws.com/#/landing
@@ -48,12 +48,68 @@ Ideas:
 Questions:
 - Can I identify a specific train car?
 
+Data Shapes:
+
+There can be a 'trip_update' with no 'stop_time_update'
+{
+    'id': '000001A', 
+    'trip_update': {
+        'trip': {
+            'trip_id': '060790_A..S', 
+            'start_time': '10:07:54', 
+            'start_date': '20211103', 
+            'route_id': 'A'
+        }, 
+        'stop_time_update': [{
+            'arrival': {'time': 1635954238}, 
+            'departure': {'time': 1635954238}, 
+            'stop_id': 'H12S'
+        }, {
+            'arrival': {'time': 1635954328}, 
+            'departure': {'time': 1635954328}, 
+            'stop_id': 'H13S'
+        }, {
+            'arrival': {'time': 1635954388}, 
+            'departure': {'time': 1635954388}, 
+            'stop_id': 'H14S'
+        }, {
+            'arrival': {'time': 1635954478},
+            'departure': {'time': 1635954478}, 
+            'stop_id': 'H15S'
+        }]
+    }
+}
+{
+    'id': '000010A', 
+    'vehicle': {
+        'trip': {
+            'trip_id': '062846_A..S',
+            'start_time': '10:28:28',
+            'start_date': '20211103',
+            'route_id': 'A'
+        }, 
+        'current_stop_sequence': 29, 
+        'current_status': 1, 
+        'timestamp': 1635954352,
+        'stop_id': 'A63S'
+    }
+}
+
+station = Stations.objects.filter(station_id='A63S')
+station.values().first().get('station_name')
+
+OR
+
+station = Stations.objects.filter(station_id='A63S')[0]
+station.station_name
+
+There are station_id in the feeds that aren't in station files.
 """
 
 def ace_data():
     feed = gtfs_realtime_pb2.FeedMessage()
 
-    headers = {'x-api-key': '2yIFQSFD13NV1t44UKqw3HWFxFEkK53hW1z4Hdf0'}
+    headers = {'x-api-key': ''}
     resp = requests.get(
         'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace',
         headers=headers
@@ -61,33 +117,73 @@ def ace_data():
 
     feed.ParseFromString(resp.content)
 
+    # Below is an example with data as a dict not a GTFS entity
     subway_feed = protobuf_to_dict(feed)
+    print(epoch_to_utc(subway_feed.get('header').get('timestamp')))
+
     subway_data = subway_feed.get('entity')
 
     for train in subway_data:
-        print(train.id)
+        # unsure if ID for unique trip or ID for unique vehicle
+        record_id = train.get('id')
+        print(record_id)
 
-        if train.HasField('trip_update'):
+        if 'trip_update' in train:
             print('in transit')
-            print(train.trip_update.stop_time_update)
-            datetime.utcfromtimestamp(
-                train.trip_update.stop_time_update[0].arrival.time
-            ).strftime('%Y-%m-%d %H:%M:%S')
-        elif train.HasField('vehicle'):
+            
+            trip_data = train.get('trip_update')
+            meta_data = trip_data.get('trip')
+            transit_data = trip_data.get('stop_time_update')
+
+            print(meta_data)
+            print(meta_data.get('trip_id'))
+            if not transit_data:
+                print('No stop_time_update')
+                continue
+
+            for stop in transit_data:
+                # print(stop)
+                stop_id = stop.get('stop_id')
+                arr_time = stop.get('arrival').get('time')
+                dep_time = stop.get('departure').get('time')
+
+                print(f'Stop ID: {stop_id}')
+                get_station_name(stop.get('stop_id'))
+                
+                if arr_time != dep_time:
+                    print('TIME DIFFERENCE')
+                    print(epoch_to_utc(arr_time))
+                    print(epoch_to_utc(dep_time))
+                else:
+                    print(epoch_to_utc(arr_time))
+
+        elif 'vehicle' in train:
             print('stopped')
 
-        # print(train)
+            meta_data = train.get('vehicle')
+            stop_time = train.get('stop_time_update')
+            
+            print(meta_data)
+            print(meta_data.get('trip').get('trip_id'))
+
+            get_station_name(meta_data.get('stop_id'))
+
+        # import pdb; pdb.set_trace()
+
+
+def get_station_name(stop_id):
+    station = Stations.objects.filter(station_id=stop_id)
+
+    if station:
+        print(station[0].station_name)
+    else:
+        print('Station stopped at a non-existent station')
+
 
 def epoch_to_utc(epoch_val):
     return datetime.utcfromtimestamp(epoch_val).strftime('%Y-%m-%d %H:%M:%S')
 
-# for stop in feed.entity[2].trip_update.stop_time_update:
-#     print(f'''
-#     {stop.stop_id}: 
-#         - Arrival = {epoch_to_utc(stop.arrival.time)}
-#         - Departure = {epoch_to_utc(stop.departure.time)}
-#     ''')
 
-if __name__ == '__main__':
+def run():
     ace_data()
 
