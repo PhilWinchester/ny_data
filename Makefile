@@ -1,10 +1,7 @@
 IMAGE_VERSION = latest
 RAND_BUILD_ID != head -c10 /dev/urandom | base32
 
-COMPOSE = docker-compose -p "${PROJECT}"
-
-HOST_UID = `id -u`
-HOST_GID = `id -g`
+COMPOSE = docker-compose -p ny_data
 
 
 # ----- Local Development -----
@@ -18,6 +15,12 @@ down: FORCE
 sh: FORCE
 	${COMPOSE} run --rm web /bin/bash
 
+web-connect: FORCE
+	docker exec -it ny_data_web_1 /bin/bash
+
+db-connect: FORCE
+	docker exec -it ny_data_db_1 psql postgres -U postgres -w postgres
+
 restart-web: FORCE
 	${COMPOSE} restart web
 
@@ -25,7 +28,8 @@ docker-build-web: FORCE
 	docker build -t "code/web:${IMAGE_VERSION}" -f "conf/web/Dockerfile" \
 		--build-arg "BUILD_VERSION=${IMAGE_VERSION}" .
 
-# docker exec -it ny_data_db_1 psql postgres -U postgres -w postgres
+# docker exec -it ny_data-db-1 psql postgres -U postgres -w postgres
+# docker exec -it ny_data-web-1 /bin/bash
 
 # docker-build-mysql: FORCE
 # 	docker build -t code/mysql:${IMAGE_VERSION} conf/mysql

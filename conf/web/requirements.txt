@@ -1,3 +1,7 @@
 Django>=3.0,<4.0
 psycopg2-binary>=2.8
 django-extensions
+gtfs-realtime-bindings
+requests
+protobuf3-to-dict
+django-environ
