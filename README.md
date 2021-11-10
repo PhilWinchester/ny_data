@@ -13,9 +13,14 @@ TODO: automate all of this.
 
 1. `make up`
 1. `make sh`
-1. `python manage.py runscript load_station_data` to populate DB with subway data.
-1. `docker exec -it ny_data_db_1 psql postgres -U postgres -w postgres` to inspect DB. 
-1. `python manage.py runscript ace_data` to run live train data file.
+1. `python manage.py migrate`
+1. `python manage.py runscript load_station_data`
+1. `python manage.py runscript ace_data`
+
+Useful commands:
+
+1. `make web` Connect to the running web container
+1. `make db` Connect to the running db container
 
 
 ## Environment Setup
@@ -37,6 +42,9 @@ docker image prune
 1. `python manage.py makemigrations realtime_subway`
 1. `python manage.py sqlmigrate realtime_subway 0003`
 1. `python manage.py migrate`
+1. `python manage.py showmigrations`
+
+https://docs.djangoproject.com/en/3.2/topics/migrations/#squashing-migrations
 
 
 ## Development Notes

@@ -3,8 +3,9 @@ version: '3'
 services:
   db:
       image: postgres
-      volumes:
-          - ./data/db:/var/lib/postgresql/data
+    #   Add if you want to persist data when containers come down
+    #   volumes:
+    #       - ./data/db:/var/lib/postgresql/data
       environment:
           - POSTGRES_DB=docker_example
           - POSTGRES_USER=postgres
@@ -12,7 +13,7 @@ services:
 
   web:
       image: code/web:${IMAGE_VERSION:-latest}
-      command: python manage.py runserver 0.0.0.0:8000
+      command: sh conf/web/entrypoint.sh
       volumes:
           - .:/code
       ports:

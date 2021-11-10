@@ -1,5 +1,7 @@
+import uuid
+
 from django.db import models
-from django.db.models.fields import BigAutoField, CharField, DateTimeField, BooleanField
+from django.db.models.fields import AutoField, BigAutoField, CharField, DateTimeField, BooleanField, UUIDField
 
 
 class TrainStatus(models.TextChoices):
@@ -10,9 +12,8 @@ class TrainStatus(models.TextChoices):
 
 # Create your models here.
 class Stations(models.Model):
-    # migrate station_id to be internal priamry key
-    # station_id becomes mta_id and is MTA's identifier
-    station_id = CharField(max_length=4)
+    station_id = AutoField(primary_key=True)
+    mta_id = CharField(max_length=4)
     station_name = CharField(max_length=2048)
     station_parent_id = CharField(max_length=3)
     station_latitude = CharField(max_length=10)
@@ -34,9 +35,11 @@ class Trains(models.Model):
     train_id = CharField(max_length=6)
     train_route = CharField(max_length=2)
     route_start = DateTimeField()
+    stop_id= CharField(max_length=6)
     current_stop = models.ForeignKey(Stations, on_delete=models.PROTECT, related_name='current_station')
     next_stop = models.ForeignKey(Stations, on_delete=models.PROTECT, related_name='next_station', null=True)
     estimated_time = CharField(max_length=64)
     historic_time = CharField(max_length=64)
     datetime_created = DateTimeField(auto_now_add=True)
     datetime_updated = DateTimeField(auto_now=True)
+    import_id = UUIDField(default=uuid.uuid4)

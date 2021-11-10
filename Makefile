@@ -15,10 +15,10 @@ down: FORCE
 sh: FORCE
 	${COMPOSE} run --rm web /bin/bash
 
-web-connect: FORCE
+web: FORCE
 	docker exec -it ny_data_web_1 /bin/bash
 
-db-connect: FORCE
+db: FORCE
 	docker exec -it ny_data_db_1 psql postgres -U postgres -w postgres
 
 restart-web: FORCE

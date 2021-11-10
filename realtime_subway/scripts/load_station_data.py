@@ -42,8 +42,6 @@ def open_files():
                 'station_parent_id': station.get('parent_station'),
             }
 
-    print(stations_dict)
-
     with open(DETAILED_STATIONS, 'r') as detailed_csv:
         """
             This CSV has one row for each station. Need to map the information
@@ -60,7 +58,6 @@ def open_files():
             station_id = station.get('GTFS Stop ID')
             south_id = f'{station_id}S'
             north_id = f'{station_id}N'
-            print(station_id)
 
             borough = BOROUGH_MAP[station.get('Borough')]
             # concat station name + lines for unique name?
@@ -69,9 +66,8 @@ def open_files():
             is_elevated = station.get('Structure') == 'Elevated'
 
             if stations_dict.get(station_id):
-                print('found parent')
                 stations_dict[station_id].update({
-                    'station_id': station_id,
+                    'mta_id': station_id,
                     'station_borough': borough,
                     'station_name': station_name,
                     'station_lines': station_lines,
@@ -81,11 +77,10 @@ def open_files():
                 parent_station.save()
 
             if stations_dict.get(south_id):
-                print('found southbound')
                 south_label = station.get('South Direction Label')
 
                 stations_dict[south_id].update({
-                    'station_id': south_id,
+                    'mta_id': south_id,
                     'station_borough': borough,
                     'station_name': station_name,
                     'station_lines': station_lines,
@@ -96,11 +91,10 @@ def open_files():
                 south_station.save()
 
             if stations_dict.get(north_id):
-                print('found northbound')
                 north_label = station.get('North Direction Label')
 
                 stations_dict[north_id].update({
-                    'station_id': north_id,
+                    'mta_id': north_id,
                     'station_borough': borough,
                     'station_name': station_name,
                     'station_lines': station_lines,
@@ -110,8 +104,6 @@ def open_files():
 
                 north_station = Stations(**stations_dict[north_id])
                 north_station.save()
-
-    print(stations_dict)
 
 
 def run():
