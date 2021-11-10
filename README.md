@@ -15,6 +15,7 @@ TODO: automate all of this.
 1. `make sh`
 1. `python manage.py runscript load_station_data` to populate DB with subway data.
 1. `docker exec -it ny_data_db_1 psql postgres -U postgres -w postgres` to inspect DB. 
+1. `python manage.py runscript ace_data` to run live train data file.
 
 
 ## Environment Setup
@@ -29,6 +30,13 @@ Add S3 and a frontend container
 ~~~
 docker image prune
 ~~~
+
+## How to migrate
+
+1. `make sh`
+1. `python manage.py makemigrations realtime_subway`
+1. `python manage.py sqlmigrate realtime_subway 0003`
+1. `python manage.py migrate`
 
 
 ## Development Notes
@@ -98,6 +106,9 @@ curl "https://data.cityofnewyork.us/resource/2nwg-uqyg.json?\$query=SELECT * WHE
 ## NYC Open Data
 
 https://data.cityofnewyork.us/browse?category=Health&q=covid
+http://mtadatamine.s3-website-us-east-1.amazonaws.com/#/landing
+http://web.mta.info/developers/developer-data-terms.html#data
+https://new.mta.info/coronavirus/ridership
 
 
 ## covid-19-nyc-data
@@ -118,3 +129,7 @@ curl "https://data.cityofnewyork.us/resource/uiay-nctu.json?open_date=2020-10-29
 https://medium.com/@_blahblahblah
 https://github.com/blahblahblah-/goodservice
 https://api.mta.info/#/landing
+https://github.com/jonthornton/MTAPI
+https://medium.com/analytics-vidhya/the-hitchhikers-guide-to-gtfs-with-python-e9790090952a
+https://transitfeeds.com/
+https://github.com/CUTR-at-USF/awesome-transit/blob/master/README.md
