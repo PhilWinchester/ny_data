@@ -5,3 +5,4 @@ gtfs-realtime-bindings
 requests
 protobuf3-to-dict
 django-environ
+djangorestframework
