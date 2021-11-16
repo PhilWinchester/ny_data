@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'realtime_subway.apps.RealtimeSubwayConfig',
     'django_extensions',
     'rest_framework',
+    'django_apscheduler',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -130,3 +131,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# APScheduler Config
+# This scheduler config will:
+# - Store jobs in the project database
+# - Execute jobs in threads inside the application process
+SCHEDULER_CONFIG = {
+    "apscheduler.jobstores.default": {
+        "class": "django_apscheduler.jobstores:DjangoJobStore"
+    },
+    'apscheduler.executors.processpool': {
+        "type": "threadpool"
+    },
+}
+SCHEDULER_AUTOSTART = True

@@ -16,10 +16,10 @@ sh: FORCE
 	${COMPOSE} run --rm web /bin/bash
 
 web: FORCE
-	docker exec -it ny_data_web_1 /bin/bash
+	docker exec -it ny_data-web-1 /bin/bash
 
 db: FORCE
-	docker exec -it ny_data_db_1 psql postgres -U postgres -w postgres
+	docker exec -it ny_data-db-1 psql postgres -U postgres -w postgres
 
 restart-web: FORCE
 	${COMPOSE} restart web

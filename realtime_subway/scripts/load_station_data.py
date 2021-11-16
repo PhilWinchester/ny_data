@@ -107,4 +107,9 @@ def open_files():
 
 
 def run():
-    open_files()
+    # TODO is this check necessary?
+    stations = Stations.objects.all()
+    if not stations:
+        open_files()
+    else:
+        print('Station Data already loaded')
