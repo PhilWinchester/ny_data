@@ -24,10 +24,11 @@ SELECT
     train_id
     , train_route
     , route_start
-    , trains.datetime_created
+    , trains.datetime_created AS import_date
     , train_direction
     , import_id
     , station_name
 FROM realtime_subway_trains AS trains
     JOIN realtime_subway_stations AS stations ON trains.current_stop_id = stations.station_id
-WHERE train_id = '084100';
+WHERE train_id = '090400'
+ORDER BY import_date DESC;

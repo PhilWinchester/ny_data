@@ -1,7 +1,5 @@
 #!/bin/bash
 
-ls -la ./conf
-
 echo "Waiting for DB to startup"
 ./conf/wait-for-it.sh db:5432
 

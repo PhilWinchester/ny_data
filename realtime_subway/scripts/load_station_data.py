@@ -106,10 +106,12 @@ def open_files():
                 north_station.save()
 
 
-def run():
+def import_station_data():
+    open_files()
     # TODO is this check necessary?
-    stations = Stations.objects.all()
-    if not stations:
-        open_files()
-    else:
-        print('Station Data already loaded')
+    # stations = Stations.objects.all()
+    # if not stations:
+    #     print('Importing Station Data')
+    #     open_files()
+    # else:
+    #     print('Station Data already loaded')

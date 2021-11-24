@@ -96,86 +96,82 @@ def ace_data():
 
     feed.ParseFromString(resp.content)
 
+    trip_data = {}
+
     for entity in feed.entity:
-        print('~' * 50)
-        # print(entity)
+        """
+        Map the two fields into one object. 
+        The "raw" version goes into a log table/topic
+        A formatted version (here or in a consumer) goes into some sort of stops/trains table.
+            That table is what let's us know where a train is on it's route.
+        """
+        # print('~' * 50)
         record_id = entity.id
-        print(f'record_id: {record_id}')
-        # print(f'record_id: {entity.start_time}')
-        # dict_entity = protobuf_to_dict(entity)
-        # print(dict_entity)
 
         if entity.HasField('trip_update'):
-            continue
+            if not trip_data:
+                trip_data = {
+                    'record_id': record_id,
+                    'import_id': import_id,
+                    'train_id': entity.trip_update.trip.trip_id,
+                    'train_route': entity.trip_update.trip.route_id,
+                    'train_direction': 'north' if entity.trip_update.trip.trip_id[-1] == 'N' else 'south',
+                    # Looks like route start is local time (ET) not UTC
+                    'route_start': get_trip_starttime(entity.trip_update),
+                }
 
-            print('We are in predictive data')
-            print(f'train_id: {entity.trip_update.trip.trip_id}')
-            print(entity.trip_update.trip)
+                stop_data = [stop for stop in entity.trip_update.stop_time_update]
 
-            for stop in entity.trip_update.stop_time_update:
-                # print(stop)
-                # arrival and departure are always the same time?
-                print(f'{stop.arrival.time} | {epoch_to_datetime(stop.arrival.time)}')
-                # print(f'{stop.departure.time} | {epoch_to_datetime(stop.departure.time)}')
-                get_station_name(stop.stop_id)
+                # print(stop_data)
+                if len(stop_data) > 1:
+                    trip_data.update({
+                        'next_stop': get_station_name(stop_data[1].stop_id),
+                        # stop_data[0] is always current stop if either stopped at or in transit to next
+                        'estimated_time': epoch_to_datetime(stop_data[1].arrival.time)
+                    })
                 
         
-        elif entity.HasField('vehicle'):
-            # print('We are in current data')
-            train_id = entity.vehicle.trip.trip_id.split('_')[0]
-            print(f'trip_id: {entity.vehicle.trip.trip_id}')
-            print(f'train_id: {train_id}')
-            # print(entity.vehicle.trip)
+        elif entity.HasField('vehicle') and trip_data:
+            if trip_data and trip_data.get('train_id') == entity.vehicle.trip.trip_id:
+                """
+                At this point we should know the route, starttime & date, and next stop(s).
+                We can find current time, current stop, current status, and stop sequence (useful?)
+                """
+                
+                trip_data.update({
+                    'stop_id': entity.vehicle.stop_id,
+                    'current_stop': get_station_name(entity.vehicle.stop_id),
+                    'train_status': entity.vehicle.current_status if entity.vehicle.current_status else 2,
+                })
 
-            train_direction = 'north' if entity.vehicle.trip.trip_id.split('_')[1][-1] == 'N' else 'south'
-            train_status = entity.vehicle.current_status if entity.vehicle.current_status else 2
-            train_route = entity.vehicle.trip.route_id
-
-            start_year = int(entity.vehicle.trip.start_date[0:4])
-            start_month = int(entity.vehicle.trip.start_date[4:6])
-            start_day = int(entity.vehicle.trip.start_date[6:])
-            start_time = entity.vehicle.trip.start_time.split(':')
-            start_hour = int(start_time[0])
-            start_minute = int(start_time[1])
-            start_second = int(start_time[2])
-
-            start_datetime = datetime(
-                start_year,
-                start_month,
-                start_day,
-                start_hour,
-                start_minute,
-                start_second,
-                tzinfo=pytz.UTC,
-            )
-
-            print(f'{entity.vehicle.timestamp} | {epoch_to_datetime(entity.vehicle.timestamp)}')
-            update_datetime = epoch_to_datetime(entity.vehicle.timestamp)
-            print(update_datetime)
-
-            print(f'status: {entity.vehicle.current_status}')
-            current_station = get_station_name(entity.vehicle.stop_id)
-            print(f'Station ID: {entity.vehicle.stop_id}')
-
-            if current_station:
-                print(current_station.station_name)
-                train_record = Trains(
-                    record_id=record_id,
-                    train_id=train_id,
-                    stop_id=entity.vehicle.stop_id,
-                    train_status=train_status,
-                    train_direction=train_direction,
-                    train_route=train_route,
-                    route_start=start_datetime,
-                    current_stop=current_station,
-                    import_id=import_id,
-                )
-                train_record.save()
             else:
-                print(f'Train is at station that does not exist: {entity.vehicle.stop_id}')
-        
-        else:
-            print('How do we get here?')
+                print('mismatching train_ids')
+                trip_data = {}
+
+            train_record = Trains(**trip_data)
+            train_record.save()
+
+            trip_data = {}
+
+
+def get_trip_starttime(trip_update):
+    start_year = int(trip_update.trip.start_date[0:4])
+    start_month = int(trip_update.trip.start_date[4:6])
+    start_day = int(trip_update.trip.start_date[6:])
+    start_time = trip_update.trip.start_time.split(':')
+    start_hour = int(start_time[0])
+    start_minute = int(start_time[1])
+    start_second = int(start_time[2])
+
+    return datetime(
+        start_year,
+        start_month,
+        start_day,
+        start_hour,
+        start_minute,
+        start_second,
+        tzinfo=pytz.UTC,
+    )
 
 
 def get_station_name(stop_id):
