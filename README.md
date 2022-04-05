@@ -71,8 +71,34 @@ Download and Parse Stations.csv google-transit/ to map stop_id to an actual stat
 
 http://webapi.legistar.com/Home/Examples
 https://council.nyc.gov/data/
+https://github.com/NewYorkCityCouncil/
 
-API Key in LastPass
+`API Key in LastPass`
+
+1. Get all Events
+    - http://webapi.legistar.com/Help/Api/GET-v1-Client-Events
+1. Find your Event
+1. Get all EventItems for that Event
+    - http://webapi.legistar.com/Help/Api/GET-v1-Client-Events-EventId-EventItems_AgendaNote_MinutesNote_Attachments
+1. Get the vote record for that EventItem 
+    - http://webapi.legistar.com/Help/Api/GET-v1-Client-EventItems-EventItemId-Votes
+1. Search for your council members name/id?
+
+
+App Idea:
+
+1. 20 latest votes page
+1. Search page
+1. Track record page
+    - By vote how a specific council member voted
+1. Legislation lookup page
+    - Lookup a specific legislation and see the full vote
+
+Notes:
+- Store all votes the API has hit in data store to not constantly spam (votes should be static)
+- Get new city council members once a week? month? year? 
+- Django App with views to handle all of this.
+
 
 ## coronavirus-data  
 
