@@ -67,6 +67,13 @@ https://docs.djangoproject.com/en/3.2/topics/migrations/#squashing-migrations
 Download and Parse Stations.csv google-transit/ to map stop_id to an actual station name. Probably need a psql table to store this.
 
 
+## NYC Legislator
+
+http://webapi.legistar.com/Home/Examples
+https://council.nyc.gov/data/
+
+API Key in LastPass
+
 ## coronavirus-data  
 
 NYC Health Data set. Updated daily (on a 3 day lag) or updated weekly on Thursday
