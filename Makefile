@@ -19,7 +19,7 @@ web: FORCE
 	docker exec -it ny_data-web-1 /bin/bash
 
 db: FORCE
-	docker exec -it ny_data-db-1 psql postgres -U postgres -w postgres
+	docker exec -it ny_data-db-1 psql -U postgres -w postgres
 
 restart-web: FORCE
 	${COMPOSE} restart web
@@ -28,7 +28,7 @@ docker-build-web: FORCE
 	docker build -t "code/web:${IMAGE_VERSION}" -f "conf/web/Dockerfile" \
 		--build-arg "BUILD_VERSION=${IMAGE_VERSION}" .
 
-# docker exec -it ny_data-db-1 psql postgres -U postgres -w postgres
+# docker exec -it ny_data-db-1 psql -U postgres -w postgres
 # docker exec -it ny_data-web-1 /bin/bash
 
 # docker-build-mysql: FORCE

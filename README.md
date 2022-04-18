@@ -16,6 +16,7 @@ TODO: automate all of this.
 1. `python manage.py migrate`
 1. `python manage.py runscript load_station_data`
 1. `python manage.py runscript ace_data`
+1. `python manage.py runscript fare_data`
 
 Useful commands:
 
@@ -109,6 +110,12 @@ By zip ER visits
 curl "https://data.cityofnewyork.us/resource/2nwg-uqyg.json" | jq .
 curl "https://data.cityofnewyork.us/resource/2nwg-uqyg.json?\$query=SELECT * WHERE mod_zcta = '10025' ORDER BY date DESC" | jq .
 ~~~
+
+
+## Subway Fare Data
+
+http://web.mta.info/developers/fare.html
+
 
 
 ## NYC Open Data

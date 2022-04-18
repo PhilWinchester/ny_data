@@ -24,11 +24,26 @@ SELECT
     train_id
     , train_route
     , route_start
+    , train_status
     , trains.datetime_created AS import_date
+    , trains.estimated_time
     , train_direction
     , import_id
-    , station_name
+    , current_stop_id
+    , stations.station_name AS current_stop
+    , next_stop_id
+    , next_stations.station_name AS next_stop
 FROM realtime_subway_trains AS trains
-    JOIN realtime_subway_stations AS stations ON trains.current_stop_id = stations.station_id
-WHERE train_id = '090400'
+    LEFT JOIN realtime_subway_stations AS stations ON trains.current_stop_id = stations.station_id
+    LEFT JOIN realtime_subway_stations AS next_stations ON trains.next_stop_id = next_stations.station_id
+WHERE train_id = '063876_C..N'
 ORDER BY import_date DESC;
+
+SELECT 
+    train_id
+    , train_status
+    , train_direction
+    , train_route
+FROM realtime_subway_trains 
+WHERE train_status = '2'
+LIMIT 20;

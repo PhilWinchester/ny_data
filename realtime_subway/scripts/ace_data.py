@@ -79,10 +79,20 @@ OR
 station = Stations.objects.filter(station_id='A63S')[0]
 station.station_name
 
+NOTE
 There are station_id in the feeds that aren't in station files.
+
+TODO
+Make sure all timezones are in EST.
+    - vehicle.trip starttime = EST
+    - trip_update.trip starttime = EST
+    - vehicle.timestamp = UTC?
+    - trip_update.stop_time_update = UTC?
+Trip Status is flipped? in their feed/how I parse it
 """
 
 
+# TODO: Add logging of full merged "record" for easier debugging
 def ace_data():
     import_id = uuid.uuid4()
 
@@ -124,9 +134,10 @@ def ace_data():
 
                 # print(stop_data)
                 if len(stop_data) > 1:
+                    # stop_data[0] is always current stop if either stopped at or in transit to next
                     trip_data.update({
                         'next_stop': get_station_name(stop_data[1].stop_id),
-                        # stop_data[0] is always current stop if either stopped at or in transit to next
+                        # TODO figure out timezone
                         'estimated_time': epoch_to_datetime(stop_data[1].arrival.time)
                     })
                 
@@ -137,10 +148,18 @@ def ace_data():
                 At this point we should know the route, starttime & date, and next stop(s).
                 We can find current time, current stop, current status, and stop sequence (useful?)
                 """
+                # print(entity.vehicle)
+                # print(entity.vehicle.current_status)
                 
+                # TODO: If train is active (ie current_status = 1)
+                #  Look for last import value and compare train station
+                #  If stations is different calculate the time diff (it's gonna be 30 seconds)
+
                 trip_data.update({
                     'stop_id': entity.vehicle.stop_id,
                     'current_stop': get_station_name(entity.vehicle.stop_id),
+                    # This logic is flipped? 
+                    # If no current_status the train hasn't started/has finished it's route
                     'train_status': entity.vehicle.current_status if entity.vehicle.current_status else 2,
                 })
 
@@ -170,7 +189,7 @@ def get_trip_starttime(trip_update):
         start_hour,
         start_minute,
         start_second,
-        tzinfo=pytz.UTC,
+        tzinfo=pytz.timezone('US/Eastern'),
     )
 
 
@@ -182,7 +201,7 @@ def get_station_name(stop_id):
 
 
 def epoch_to_datetime(epoch_val):
-    return datetime.utcfromtimestamp(epoch_val)
+    return datetime.utcfromtimestamp(epoch_val).astimezone(tz=pytz.timezone('US/Eastern'))
 
 
 def run():
